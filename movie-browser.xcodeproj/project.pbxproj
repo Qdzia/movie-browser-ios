@@ -17,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		104EC49E2A1649B700C0C04D /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		10876CA12A162E6A009666BA /* movie-browser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "movie-browser.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		10876CA42A162E6A009666BA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		10876CA62A162E6A009666BA /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -58,6 +59,7 @@
 		10876CA32A162E6A009666BA /* movie-browser */ = {
 			isa = PBXGroup;
 			children = (
+				104EC49E2A1649B700C0C04D /* Secrets.xcconfig */,
 				10876CA42A162E6A009666BA /* AppDelegate.swift */,
 				10876CA62A162E6A009666BA /* SceneDelegate.swift */,
 				10876CA82A162E6A009666BA /* ViewController.swift */,
@@ -176,6 +178,7 @@
 /* Begin XCBuildConfiguration section */
 		10876CB32A162E6A009666BA /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 104EC49E2A1649B700C0C04D /* Secrets.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -236,6 +239,7 @@
 		};
 		10876CB42A162E6A009666BA /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 104EC49E2A1649B700C0C04D /* Secrets.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -290,6 +294,7 @@
 		};
 		10876CB62A162E6A009666BA /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 104EC49E2A1649B700C0C04D /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -321,6 +326,7 @@
 		};
 		10876CB72A162E6A009666BA /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 104EC49E2A1649B700C0C04D /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
