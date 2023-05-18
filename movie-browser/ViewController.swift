@@ -9,6 +9,10 @@ import UIKit
 import SnapKit
 
 class ViewController: UIViewController {
+    let defaultSession = URLSession(configuration: .default)
+    var dataTask: URLSessionDataTask?
+    var errorMessage: String = ""
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -18,7 +22,6 @@ class ViewController: UIViewController {
         view.addSubview(homeLabel)
         homeLabel.snp.makeConstraints { make in
             make.edges.equalToSuperview()
-        }
+        }        
     }
 }
-
