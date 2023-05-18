@@ -13,6 +13,7 @@
 		10876CAC2A162E6A009666BA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 10876CAA2A162E6A009666BA /* Main.storyboard */; };
 		10876CAE2A162E6A009666BA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 10876CAD2A162E6A009666BA /* Assets.xcassets */; };
 		10876CB12A162E6A009666BA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 10876CAF2A162E6A009666BA /* LaunchScreen.storyboard */; };
+		10DC89BF2A16305E00198117 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 10DC89BE2A16305E00198117 /* SnapKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				10DC89BF2A16305E00198117 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -83,6 +85,9 @@
 			dependencies = (
 			);
 			name = "movie-browser";
+			packageProductDependencies = (
+				10DC89BE2A16305E00198117 /* SnapKit */,
+			);
 			productName = "movie-browser";
 			productReference = 10876CA12A162E6A009666BA /* movie-browser.app */;
 			productType = "com.apple.product-type.application";
@@ -111,6 +116,9 @@
 				Base,
 			);
 			mainGroup = 10876C982A162E6A009666BA;
+			packageReferences = (
+				10DC89BD2A16305E00198117 /* XCRemoteSwiftPackageReference "SnapKit" */,
+			);
 			productRefGroup = 10876CA22A162E6A009666BA /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -364,6 +372,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		10DC89BD2A16305E00198117 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		10DC89BE2A16305E00198117 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 10DC89BD2A16305E00198117 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 10876C992A162E6A009666BA /* Project object */;
 }
