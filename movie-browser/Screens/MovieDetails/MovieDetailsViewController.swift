@@ -14,23 +14,52 @@ class MovieDetailsViewController: UIViewController {
     private let overviewLabel = UILabel()
     private let stackView = UIStackView()
     
-    private let imageNetworkService = ImageNetworkService()
-    
+    private var imageNetworkService: ImageNetworkService
+    private var repository: FavoriteMoviesRepository
+    private let movie: MovieModel
+
     private let screenPadding = UIEdgeInsets(top: 24, left: 24, bottom: 24, right: 24)
     private let elementsSpacing = 16.0
     private let posterHeight = 350.0
+    
+    init(movie: MovieModel, imageNetworkService: ImageNetworkService, repository: FavoriteMoviesRepository) {
+        self.movie = movie
+        self.imageNetworkService = imageNetworkService
+        self.repository = repository
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpView()
         snapLayout()
+        addNavigationItem()
+        fetchPosterImage(path: movie.posterPath)
     }
     
-    func update(_ model: MovieModel) {
-        titleLabel.text = model.title
-        overviewLabel.text = model.overview
-        releaseDateLabel.text = model.releaseDate
-        fetchPosterImage(path: model.posterPath)
+    private func addNavigationItem() {
+        let button = UIBarButtonItem(
+            image: UIImage(systemName: "heart"),
+            style: .plain,
+            target: self,
+            action: #selector(favoriteButtonClicked)
+        )
+        navigationItem.rightBarButtonItem = button
+        updateFavoriteButton()
+    }
+    
+    @objc private func favoriteButtonClicked() {
+        repository.addOrRemove(movie.id)
+        updateFavoriteButton()
+    }
+    
+    private func updateFavoriteButton() {
+        let imageName = repository.contains(movie.id) ? "heart.fill" : "heart"
+        navigationItem.rightBarButtonItem?.image = UIImage(systemName: imageName)
     }
     
     private func fetchPosterImage(path: String) {
@@ -46,7 +75,10 @@ class MovieDetailsViewController: UIViewController {
     }
     
     private func loadPosterImage(from data: Data) {
-        guard let image = imageNetworkService.createImage(from: data) else { return }
+        guard let image = imageNetworkService.createImage(from: data) else {
+            Log.error("Couldn't create image")
+            return
+        }
         DispatchQueue.main.async { [weak self] in
             self?.posterImageView.image = image
         }
@@ -55,25 +87,20 @@ class MovieDetailsViewController: UIViewController {
     private func setUpView() {
         title = "Details"
         
+        titleLabel.text = movie.title
         titleLabel.textAlignment = .center
         
         releaseDateLabel.textAlignment = .center
         
+        overviewLabel.text = movie.overview
         overviewLabel.numberOfLines = .zero
         overviewLabel.lineBreakMode = .byWordWrapping
         
+        releaseDateLabel.text = movie.releaseDate
+        
         posterImageView.contentMode = .scaleAspectFit
         
-        stackView.axis = .vertical
-        stackView.spacing = elementsSpacing
-        stackView.distribution = .fill
-        stackView.addArrangedSubview(posterImageView)
-        stackView.addArrangedSubview(titleLabel)
-        stackView.addArrangedSubview(releaseDateLabel)
-        stackView.addArrangedSubview(overviewLabel)
-        stackView.addArrangedSubview(UIView())
-
-        view.addSubview(stackView)
+        setUpStackView()
         view.backgroundColor = .white
     }
     
@@ -85,5 +112,17 @@ class MovieDetailsViewController: UIViewController {
         posterImageView.snp.makeConstraints { make in
             make.height.equalTo(posterHeight)
         }
+    }
+    
+    private func setUpStackView() {
+        stackView.axis = .vertical
+        stackView.spacing = elementsSpacing
+        stackView.distribution = .fill
+        stackView.addArrangedSubview(posterImageView)
+        stackView.addArrangedSubview(titleLabel)
+        stackView.addArrangedSubview(releaseDateLabel)
+        stackView.addArrangedSubview(overviewLabel)
+        stackView.addArrangedSubview(UIView())
+        view.addSubview(stackView)
     }
 }

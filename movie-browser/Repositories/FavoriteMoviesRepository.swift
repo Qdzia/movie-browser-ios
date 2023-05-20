@@ -11,6 +11,7 @@ protocol FavoriteMoviesRepository {
     func add(_ movieId: Int)
     func remove(_ movieId: Int)
     func contains(_ movieId: Int) -> Bool
+    func addOrRemove(_ movieId: Int)
 }
 
 class DefaultsFavoriteMoviesRepository {
@@ -36,6 +37,14 @@ class DefaultsFavoriteMoviesRepository {
 }
 
 extension DefaultsFavoriteMoviesRepository: FavoriteMoviesRepository {
+    func addOrRemove(_ movieId: Int) {
+        if contains(movieId) {
+            remove(movieId)
+        } else {
+            add(movieId)
+        }
+    }
+    
     func add(_ movieId: Int) {
         favoritesMoviesIds.insert(movieId)
         saveFavorites()

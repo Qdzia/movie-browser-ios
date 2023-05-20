@@ -11,9 +11,12 @@ import Foundation
 
 class MovieListViewController: UIViewController {
     private let repository: FavoriteMoviesRepository = DefaultsFavoriteMoviesRepository()
+    private let imageNetworkService = ImageNetworkService()
+    private let movieNetworkService = MovieNetworkService()
     private let tableView = UITableView()
     private var movies: [MovieModel] = []
-    private let movieNetworkService = MovieNetworkService()
+    private var tableViewCells: [MovieModel] = []
+    private var isFavoriteFilterOn = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,6 +31,23 @@ class MovieListViewController: UIViewController {
         tableView.delegate = self
         view.addSubview(tableView)
         tableView.register(MovieListCell.self, forCellReuseIdentifier: "MovieListCell")
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "heart.circle"),
+            style: .plain,
+            target: self,
+            action: #selector(favoriteFilterButtonClicked)
+        )
+    }
+    
+    @objc func favoriteFilterButtonClicked() {
+        isFavoriteFilterOn.toggle()
+        if isFavoriteFilterOn {
+            tableViewCells = movies.filter { repository.contains($0.id) }
+        } else {
+            tableViewCells = movies
+        }
+        tableView.reloadData()
     }
     
     private func snapLayout() {
@@ -52,42 +72,42 @@ class MovieListViewController: UIViewController {
         guard let model: NowPlayingMoviesModel = movieNetworkService.parseJSON(data: data) else { return }
         DispatchQueue.main.async { [weak self] in
             self?.movies = model.results
+            self?.tableViewCells = model.results
             self?.tableView.reloadData()
         }
     }
     
     private func favoriteButtonClicked(with movieId: Int) {
-        if repository.contains(movieId) {
-            repository.remove(movieId)
-        } else {
-            repository.add(movieId)
-        }
+        repository.addOrRemove(movieId)
     }
     
     private func navigateToMovieDetails(_ movie: MovieModel) {
-        let detailsViewController = MovieDetailsViewController()
-        detailsViewController.update(movie)
+        let detailsViewController = MovieDetailsViewController(
+            movie: movie,
+            imageNetworkService: imageNetworkService,
+            repository: repository
+        )
         navigationController?.pushViewController(detailsViewController, animated: true)
     }
 }
 
 extension MovieListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return movies.count
+        return tableViewCells.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MovieListCell", for: indexPath)
         
         if let movieCell = cell as? MovieListCell {
-            movieCell.update(movies[indexPath.row])
+            movieCell.update(tableViewCells[indexPath.row])
         }
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let movieId = movies[indexPath.row].id
+        let movieId = tableViewCells[indexPath.row].id
         
         let favoriteButton = UIContextualAction(style: .normal, title: nil) { [weak self] (_, _, completionHandler) in
             self?.favoriteButtonClicked(with: movieId)
@@ -104,6 +124,6 @@ extension MovieListViewController: UITableViewDataSource {
 
 extension MovieListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        navigateToMovieDetails(movies[indexPath.row])
+        navigateToMovieDetails(tableViewCells[indexPath.row])
     }
 }
