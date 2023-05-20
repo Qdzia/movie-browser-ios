@@ -89,13 +89,16 @@ class MovieDetailsViewController: UIViewController {
         
         titleLabel.text = movie.title
         titleLabel.textAlignment = .center
+        titleLabel.textColor = .primaryText
         
         releaseDateLabel.textAlignment = .center
+        releaseDateLabel.textColor = .secondaryText
         
         overviewLabel.text = movie.overview
         overviewLabel.numberOfLines = .zero
         overviewLabel.lineBreakMode = .byWordWrapping
-        
+        overviewLabel.textColor = .primaryText
+
         releaseDateLabel.text = movie.releaseDate
         
         posterImageView.contentMode = .scaleAspectFit

@@ -29,6 +29,7 @@ class MovieListViewController: UIViewController {
         title = "The MovieDB"
         tableView.dataSource = self
         tableView.delegate = self
+        view.backgroundColor = .gray
         view.addSubview(tableView)
         tableView.register(MovieListCell.self, forCellReuseIdentifier: "MovieListCell")
         
@@ -116,7 +117,7 @@ extension MovieListViewController: UITableViewDataSource {
         
         let imageName = repository.contains(movieId) ? "heart.fill" : "heart"
         favoriteButton.image = UIImage(systemName: imageName)
-        favoriteButton.backgroundColor = .systemPink
+        favoriteButton.backgroundColor = .accent
         
         return UISwipeActionsConfiguration(actions: [favoriteButton])
     }

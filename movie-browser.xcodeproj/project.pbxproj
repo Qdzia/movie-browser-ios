@@ -23,6 +23,8 @@
 		10876CA72A162E6A009666BA /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10876CA62A162E6A009666BA /* SceneDelegate.swift */; };
 		10876CAE2A162E6A009666BA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 10876CAD2A162E6A009666BA /* Assets.xcassets */; };
 		10876CB12A162E6A009666BA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 10876CAF2A162E6A009666BA /* LaunchScreen.storyboard */; };
+		108C19BF2A18E75900B910D5 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 108C19BE2A18E75900B910D5 /* Colors.xcassets */; };
+		108C19C12A18EB8600B910D5 /* ColorHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 108C19C02A18EB8600B910D5 /* ColorHelper.swift */; };
 		10DC89BF2A16305E00198117 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 10DC89BE2A16305E00198117 /* SnapKit */; };
 /* End PBXBuildFile section */
 
@@ -46,6 +48,8 @@
 		10876CAD2A162E6A009666BA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		10876CB02A162E6A009666BA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		10876CB22A162E6A009666BA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		108C19BE2A18E75900B910D5 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
+		108C19C02A18EB8600B910D5 /* ColorHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +97,7 @@
 			children = (
 				105F0D392A177F130048218E /* Log.swift */,
 				105F0D442A17C81A0048218E /* UserDefaultsKey.swift */,
+				108C19C02A18EB8600B910D5 /* ColorHelper.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -153,6 +158,7 @@
 				10876CAD2A162E6A009666BA /* Assets.xcassets */,
 				10876CAF2A162E6A009666BA /* LaunchScreen.storyboard */,
 				10876CB22A162E6A009666BA /* Info.plist */,
+				108C19BE2A18E75900B910D5 /* Colors.xcassets */,
 			);
 			path = "movie-browser";
 			sourceTree = "<group>";
@@ -221,6 +227,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				108C19BF2A18E75900B910D5 /* Colors.xcassets in Resources */,
 				10876CB12A162E6A009666BA /* LaunchScreen.storyboard in Resources */,
 				10876CAE2A162E6A009666BA /* Assets.xcassets in Resources */,
 			);
@@ -234,6 +241,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				105F0D352A177EC40048218E /* MovieModel.swift in Sources */,
+				108C19C12A18EB8600B910D5 /* ColorHelper.swift in Sources */,
 				1046DE502A18B9D9001732E6 /* MovieListCell.swift in Sources */,
 				105F0D3C2A1787760048218E /* NetworkService.swift in Sources */,
 				105F0D3A2A177F130048218E /* Log.swift in Sources */,
