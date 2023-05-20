@@ -13,19 +13,46 @@ class MovieListViewController: UIViewController {
     private let repository: FavoriteMoviesRepository = DefaultsFavoriteMoviesRepository()
     private let tableView = UITableView()
     private var movies: [MovieModel] = []
+    private let movieNetworkService = MovieNetworkService()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupTableView()
+        setUpView()
+        snapLayout()
+        fetchMovieList()
     }
     
-    private func setupTableView() {
+    private func setUpView() {
+        title = "The MovieDB"
         tableView.dataSource = self
         tableView.delegate = self
         view.addSubview(tableView)
         tableView.register(MovieListCell.self, forCellReuseIdentifier: "MovieListCell")
+    }
+    
+    private func snapLayout() {
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
+        }
+    }
+    
+    private func fetchMovieList() {
+        guard let request = movieNetworkService.nowPlayingMovies(page: 1) else { return }
+        movieNetworkService.sendRequest(request) { [weak self] result in
+            switch result {
+            case .success(let data):
+                self?.loadMovies(from: data)
+            case .failure(let error):
+                Log.error("Couldn't load list due to: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    private func loadMovies(from data: Data) {
+        guard let model: NowPlayingMoviesModel = movieNetworkService.parseJSON(data: data) else { return }
+        DispatchQueue.main.async { [weak self] in
+            self?.movies = model.results
+            self?.tableView.reloadData()
         }
     }
     
@@ -37,8 +64,10 @@ class MovieListViewController: UIViewController {
         }
     }
     
-    private func navigateToMovieDetails(_ movieId: Int) {
-        // TODO: Implement Movie Details
+    private func navigateToMovieDetails(_ movie: MovieModel) {
+        let detailsViewController = MovieDetailsViewController()
+        detailsViewController.update(movie)
+        navigationController?.pushViewController(detailsViewController, animated: true)
     }
 }
 
@@ -75,6 +104,6 @@ extension MovieListViewController: UITableViewDataSource {
 
 extension MovieListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        navigateToMovieDetails(movies[indexPath.row].id)
+        navigateToMovieDetails(movies[indexPath.row])
     }
 }
