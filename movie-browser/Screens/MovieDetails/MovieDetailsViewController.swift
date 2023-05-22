@@ -13,6 +13,7 @@ class MovieDetailsViewController: UIViewController {
     private let releaseDateLabel = UILabel()
     private let overviewLabel = UILabel()
     private let stackView = UIStackView()
+    private let scrollView = UIScrollView()
     
     private var imageNetworkService: ImageNetworkService
     private var repository: FavoriteMoviesRepository
@@ -104,12 +105,18 @@ class MovieDetailsViewController: UIViewController {
         posterImageView.contentMode = .scaleAspectFit
         
         setUpStackView()
+        view.addSubview(scrollView)
         view.backgroundColor = .white
     }
     
     private func snapLayout() {
+        scrollView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
         stackView.snp.makeConstraints { make in
-            make.edges.equalTo(view.safeAreaLayoutGuide).inset(screenPadding)
+            make.top.bottom.equalTo(scrollView).inset(screenPadding)
+            make.leading.trailing.equalTo(view).inset(screenPadding)
         }
         
         posterImageView.snp.makeConstraints { make in
@@ -126,6 +133,6 @@ class MovieDetailsViewController: UIViewController {
         stackView.addArrangedSubview(releaseDateLabel)
         stackView.addArrangedSubview(overviewLabel)
         stackView.addArrangedSubview(UIView())
-        view.addSubview(stackView)
+        scrollView.addSubview(stackView)
     }
 }
