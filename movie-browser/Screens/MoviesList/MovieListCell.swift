@@ -28,11 +28,11 @@ class MovieListCell: UITableViewCell {
         
         stackView.axis = .horizontal
         stackView.spacing = elementsSpacing
-        addSubview(stackView)
 
         stackView.addArrangedSubview(titleLabel)
         stackView.addArrangedSubview(starImageView)
         stackView.addArrangedSubview(voteLabel)
+        addSubview(stackView)
     }
 
     private func snapLayout() {

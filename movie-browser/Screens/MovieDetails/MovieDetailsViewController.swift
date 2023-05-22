@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol MovieDetailsViewable {
+    func loadPoster(_ image: UIImage)
+}
+
 class MovieDetailsViewController: UIViewController {
     private let posterImageView = UIImageView()
     private let titleLabel = UILabel()
@@ -14,19 +18,20 @@ class MovieDetailsViewController: UIViewController {
     private let overviewLabel = UILabel()
     private let stackView = UIStackView()
     private let scrollView = UIScrollView()
-    
-    private var imageNetworkService: ImageNetworkService
-    private var repository: FavoriteMoviesRepository
+
     private let movie: MovieModel
+    private let presenter = MovieDetailsPresenter()
 
     private let screenPadding = UIEdgeInsets(top: 24, left: 24, bottom: 24, right: 24)
     private let elementsSpacing = 16.0
     private let posterHeight = 350.0
     
-    init(movie: MovieModel, imageNetworkService: ImageNetworkService, repository: FavoriteMoviesRepository) {
+    private var navigationItemImageName: String {
+        presenter.isMovieInFavorites(movie.id) ? "heart.fill" : "heart"
+    }
+    
+    init(movie: MovieModel) {
         self.movie = movie
-        self.imageNetworkService = imageNetworkService
-        self.repository = repository
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -39,74 +44,44 @@ class MovieDetailsViewController: UIViewController {
         setUpView()
         snapLayout()
         addNavigationItem()
-        fetchPosterImage(path: movie.posterPath)
-    }
-    
-    private func addNavigationItem() {
-        let button = UIBarButtonItem(
-            image: UIImage(systemName: "heart"),
-            style: .plain,
-            target: self,
-            action: #selector(favoriteButtonClicked)
-        )
-        navigationItem.rightBarButtonItem = button
-        updateFavoriteButton()
-    }
-    
-    @objc private func favoriteButtonClicked() {
-        repository.addOrRemove(movie.id)
-        updateFavoriteButton()
-    }
-    
-    private func updateFavoriteButton() {
-        let imageName = repository.contains(movie.id) ? "heart.fill" : "heart"
-        navigationItem.rightBarButtonItem?.image = UIImage(systemName: imageName)
-    }
-    
-    private func fetchPosterImage(path: String) {
-        guard let request = imageNetworkService.poster(path: path, size: .w342) else { return }
-        imageNetworkService.sendRequest(request) { [weak self] result in
-            switch result {
-            case .success(let data):
-                self?.loadPosterImage(from: data)
-            case .failure(let error):
-                Log.error("Couldn't load image due to: \(error.localizedDescription)")
-            }
-        }
-    }
-    
-    private func loadPosterImage(from data: Data) {
-        guard let image = imageNetworkService.createImage(from: data) else {
-            Log.error("Couldn't create image")
-            return
-        }
-        DispatchQueue.main.async { [weak self] in
-            self?.posterImageView.image = image
-        }
+        presenter.fetchPosterImage(path: movie.posterPath)
     }
     
     private func setUpView() {
         title = "Details"
-        
+        view.backgroundColor = .white
+        presenter.viewController = self
+
+        setUpLabels()
+        setUpStackView()
+    }
+    
+    private func setUpStackView() {
+        stackView.axis = .vertical
+        stackView.spacing = elementsSpacing
+        stackView.distribution = .fill
+        stackView.addArrangedSubview(posterImageView)
+        stackView.addArrangedSubview(titleLabel)
+        stackView.addArrangedSubview(releaseDateLabel)
+        stackView.addArrangedSubview(overviewLabel)
+        stackView.addArrangedSubview(UIView())
+        scrollView.addSubview(stackView)
+        view.addSubview(scrollView)
+    }
+    
+    private func setUpLabels() {
         titleLabel.text = movie.title
         titleLabel.textAlignment = .center
         titleLabel.textColor = .primaryText
         
+        releaseDateLabel.text = movie.releaseDate
         releaseDateLabel.textAlignment = .center
         releaseDateLabel.textColor = .secondaryText
         
         overviewLabel.text = movie.overview
+        overviewLabel.textColor = .primaryText
         overviewLabel.numberOfLines = .zero
         overviewLabel.lineBreakMode = .byWordWrapping
-        overviewLabel.textColor = .primaryText
-
-        releaseDateLabel.text = movie.releaseDate
-        
-        posterImageView.contentMode = .scaleAspectFit
-        
-        setUpStackView()
-        view.addSubview(scrollView)
-        view.backgroundColor = .white
     }
     
     private func snapLayout() {
@@ -124,15 +99,25 @@ class MovieDetailsViewController: UIViewController {
         }
     }
     
-    private func setUpStackView() {
-        stackView.axis = .vertical
-        stackView.spacing = elementsSpacing
-        stackView.distribution = .fill
-        stackView.addArrangedSubview(posterImageView)
-        stackView.addArrangedSubview(titleLabel)
-        stackView.addArrangedSubview(releaseDateLabel)
-        stackView.addArrangedSubview(overviewLabel)
-        stackView.addArrangedSubview(UIView())
-        scrollView.addSubview(stackView)
+    private func addNavigationItem() {
+        let button = UIBarButtonItem(
+            image: UIImage(systemName: navigationItemImageName),
+            style: .plain,
+            target: self,
+            action: #selector(favoriteButtonClicked)
+        )
+        navigationItem.rightBarButtonItem = button
+    }
+    
+    @objc private func favoriteButtonClicked() {
+        presenter.toogleFavoriteMovie(movie.id)
+        navigationItem.rightBarButtonItem?.image = UIImage(systemName: navigationItemImageName)
+    }
+}
+
+extension MovieDetailsViewController: MovieDetailsViewable {
+    func loadPoster(_ image: UIImage) {
+        posterImageView.contentMode = .scaleAspectFit
+        posterImageView.image = image
     }
 }

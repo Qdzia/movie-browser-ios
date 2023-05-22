@@ -9,46 +9,33 @@ import UIKit
 import SnapKit
 import Foundation
 
+protocol MovieListViewable {
+    func loadMovies(_ movies: [MovieModel])
+}
+
 class MovieListViewController: UIViewController {
-    private let repository: FavoriteMoviesRepository = DefaultsFavoriteMoviesRepository()
-    private let imageNetworkService = ImageNetworkService()
-    private let movieNetworkService = MovieNetworkService()
     private let tableView = UITableView()
-    private var movies: [MovieModel] = []
+    
     private var tableViewCells: [MovieModel] = []
-    private var isFavoriteFilterOn = false
+    private let presenter = MovieListPresenter()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpView()
         snapLayout()
-        fetchMovieList()
+        presenter.fetchMovieList()
     }
     
     private func setUpView() {
         title = "The MovieDB"
+        view.backgroundColor = .gray
+        presenter.viewController = self
+        addNavigationItem()
+        
+        tableView.register(MovieListCell.self, forCellReuseIdentifier: "MovieListCell")
         tableView.dataSource = self
         tableView.delegate = self
-        view.backgroundColor = .gray
         view.addSubview(tableView)
-        tableView.register(MovieListCell.self, forCellReuseIdentifier: "MovieListCell")
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: UIImage(systemName: "heart.circle"),
-            style: .plain,
-            target: self,
-            action: #selector(favoriteFilterButtonClicked)
-        )
-    }
-    
-    @objc func favoriteFilterButtonClicked() {
-        isFavoriteFilterOn.toggle()
-        if isFavoriteFilterOn {
-            tableViewCells = movies.filter { repository.contains($0.id) }
-        } else {
-            tableViewCells = movies
-        }
-        tableView.reloadData()
     }
     
     private func snapLayout() {
@@ -57,38 +44,34 @@ class MovieListViewController: UIViewController {
         }
     }
     
-    private func fetchMovieList() {
-        guard let request = movieNetworkService.nowPlayingMovies(page: 1) else { return }
-        movieNetworkService.sendRequest(request) { [weak self] result in
-            switch result {
-            case .success(let data):
-                self?.loadMovies(from: data)
-            case .failure(let error):
-                Log.error("Couldn't load list due to: \(error.localizedDescription)")
-            }
-        }
+    private func addNavigationItem() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "heart.circle"),
+            style: .plain,
+            target: self,
+            action: #selector(toggleFavoriteFilter)
+        )
     }
     
-    private func loadMovies(from data: Data) {
-        guard let model: NowPlayingMoviesModel = movieNetworkService.parseJSON(data: data) else { return }
-        DispatchQueue.main.async { [weak self] in
-            self?.movies = model.results
-            self?.tableViewCells = model.results
-            self?.tableView.reloadData()
-        }
+    @objc private func toggleFavoriteFilter() {
+        presenter.toggleFavoriteFilter()
     }
     
-    private func favoriteButtonClicked(with movieId: Int) {
-        repository.addOrRemove(movieId)
+    private func favoriteButtonClicked(on movieId: Int) {
+        presenter.toogleFavoriteMovie(movieId)
     }
     
     private func navigateToMovieDetails(_ movie: MovieModel) {
-        let detailsViewController = MovieDetailsViewController(
-            movie: movie,
-            imageNetworkService: imageNetworkService,
-            repository: repository
-        )
+        // TODO: Set up DI
+        let detailsViewController = MovieDetailsViewController(movie: movie)
         navigationController?.pushViewController(detailsViewController, animated: true)
+    }
+}
+
+extension MovieListViewController: MovieListViewable {
+    func loadMovies(_ movies: [MovieModel]) {
+        tableViewCells = movies
+        tableView.reloadData()
     }
 }
 
@@ -111,11 +94,11 @@ extension MovieListViewController: UITableViewDataSource {
         let movieId = tableViewCells[indexPath.row].id
         
         let favoriteButton = UIContextualAction(style: .normal, title: nil) { [weak self] (_, _, completionHandler) in
-            self?.favoriteButtonClicked(with: movieId)
+            self?.favoriteButtonClicked(on: movieId)
             completionHandler(true)
         }
         
-        let imageName = repository.contains(movieId) ? "heart.fill" : "heart"
+        let imageName = presenter.isMovieInFavorites(movieId) ? "heart.fill" : "heart"
         favoriteButton.image = UIImage(systemName: imageName)
         favoriteButton.backgroundColor = .accent
         

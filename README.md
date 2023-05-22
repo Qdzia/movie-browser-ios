@@ -1,6 +1,7 @@
 # Movie browser
 Support: iOS 13+
-Tech stack: SnapKit
+Tech stack: MVP, SnapKit
+Version: 0.0.1
 
 Movie Browser is a simple app using TheMovieDB to fetch and display currently playing movies. The user can make a personalized list of favorite movies and read details about each of them.
 

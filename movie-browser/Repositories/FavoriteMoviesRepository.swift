@@ -15,6 +15,7 @@ protocol FavoriteMoviesRepository {
 }
 
 class DefaultsFavoriteMoviesRepository {
+    static let shared = DefaultsFavoriteMoviesRepository()
     private let defaults = UserDefaults.standard
     private lazy var favoritesMoviesIds: Set<Int> = []
     
@@ -31,7 +32,7 @@ class DefaultsFavoriteMoviesRepository {
         defaults.save(list, forKey: .favoritesMovies)
     }
     
-    init() {
+    private init() {
        loadFavorites()
     }
 }
