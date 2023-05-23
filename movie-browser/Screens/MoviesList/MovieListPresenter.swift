@@ -16,10 +16,16 @@ protocol MovieListPresentable {
 
 class MovieListPresenter {
     weak var viewController: MovieListViewController?
-    private let movieNetworkService = MovieNetworkService()
-    private let repository = DefaultsFavoriteMoviesRepository.shared
+    private let movieNetworkService: MovieNetworkService
+    private let repository: FavoriteMoviesRepository
+    
     private var movies: [MovieModel] = []
     private var isFavoriteFilterOn = false
+    
+    init(movieNetworkService: MovieNetworkService, repository: FavoriteMoviesRepository) {
+        self.movieNetworkService = movieNetworkService
+        self.repository = repository
+    }
     
     private func handleMovieResult(_ result: Result<Data, NetworkError>) {
         switch result {

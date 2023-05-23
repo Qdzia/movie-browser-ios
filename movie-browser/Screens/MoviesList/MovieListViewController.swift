@@ -15,21 +15,21 @@ protocol MovieListViewable {
 
 class MovieListViewController: UIViewController {
     private let tableView = UITableView()
-    
     private var tableViewCells: [MovieModel] = []
-    private let presenter = MovieListPresenter()
+    
+    weak var coordinator: MovieCoordinator?
+    var presenter: MovieListPresenter?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpView()
         snapLayout()
-        presenter.fetchMovieList()
+        presenter?.fetchMovieList()
     }
     
     private func setUpView() {
         title = "The MovieDB"
         view.backgroundColor = .gray
-        presenter.viewController = self
         addNavigationItem()
         
         tableView.register(MovieListCell.self, forCellReuseIdentifier: "MovieListCell")
@@ -54,17 +54,11 @@ class MovieListViewController: UIViewController {
     }
     
     @objc private func toggleFavoriteFilter() {
-        presenter.toggleFavoriteFilter()
+        presenter?.toggleFavoriteFilter()
     }
     
     private func favoriteButtonClicked(on movieId: Int) {
-        presenter.toogleFavoriteMovie(movieId)
-    }
-    
-    private func navigateToMovieDetails(_ movie: MovieModel) {
-        // TODO: Set up DI
-        let detailsViewController = MovieDetailsViewController(movie: movie)
-        navigationController?.pushViewController(detailsViewController, animated: true)
+        presenter?.toogleFavoriteMovie(movieId)
     }
 }
 
@@ -98,8 +92,9 @@ extension MovieListViewController: UITableViewDataSource {
             completionHandler(true)
         }
         
-        let imageName = presenter.isMovieInFavorites(movieId) ? "heart.fill" : "heart"
-        favoriteButton.image = UIImage(systemName: imageName)
+        if let isInFavorites = presenter?.isMovieInFavorites(movieId) {
+            favoriteButton.image = UIImage(systemName: isInFavorites ? "heart.fill" : "heart")
+        }
         favoriteButton.backgroundColor = .accent
         
         return UISwipeActionsConfiguration(actions: [favoriteButton])
@@ -108,6 +103,6 @@ extension MovieListViewController: UITableViewDataSource {
 
 extension MovieListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        navigateToMovieDetails(tableViewCells[indexPath.row])
+        coordinator?.navigateToMovieDetails(tableViewCells[indexPath.row])
     }
 }

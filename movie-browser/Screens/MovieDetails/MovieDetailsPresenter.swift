@@ -15,8 +15,13 @@ protocol MovieDetailsPresentable {
 
 class MovieDetailsPresenter {
     weak var viewController: MovieDetailsViewController?
-    private let imageNetworkService = ImageNetworkService()
-    private let repository = DefaultsFavoriteMoviesRepository.shared
+    private let imageNetworkService: ImageNetworkService
+    private let repository: FavoriteMoviesRepository
+    
+    init(imageNetworkService: ImageNetworkService, repository: FavoriteMoviesRepository) {
+        self.imageNetworkService = imageNetworkService
+        self.repository = repository
+    }
     
     private func handleImageResult(_ result: Result<Data, NetworkError>) {
         switch result {
