@@ -7,7 +7,7 @@
 
 import UIKit
 import SnapKit
-import Foundation
+import Swinject
 
 protocol MovieListViewable {
     func loadMovies(_ movies: [MovieModel])
@@ -18,13 +18,13 @@ class MovieListViewController: UIViewController {
     private var tableViewCells: [MovieModel] = []
     
     weak var coordinator: MovieCoordinator?
-    var presenter: MovieListPresenter?
+    var presenter: MovieListPresenter!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpView()
         snapLayout()
-        presenter?.fetchMovieList()
+        presenter.fetchMovieList()
     }
     
     private func setUpView() {
@@ -54,11 +54,11 @@ class MovieListViewController: UIViewController {
     }
     
     @objc private func toggleFavoriteFilter() {
-        presenter?.toggleFavoriteFilter()
+        presenter.toggleFavoriteFilter()
     }
     
     private func favoriteButtonClicked(on movieId: Int) {
-        presenter?.toogleFavoriteMovie(movieId)
+        presenter.toogleFavoriteMovie(movieId)
     }
 }
 
@@ -92,9 +92,8 @@ extension MovieListViewController: UITableViewDataSource {
             completionHandler(true)
         }
         
-        if let isInFavorites = presenter?.isMovieInFavorites(movieId) {
-            favoriteButton.image = UIImage(systemName: isInFavorites ? "heart.fill" : "heart")
-        }
+        let imageName = presenter.isMovieInFavorites(movieId) ? "heart.fill" : "heart"
+        favoriteButton.image = UIImage(systemName: imageName)
         favoriteButton.backgroundColor = .accent
         
         return UISwipeActionsConfiguration(actions: [favoriteButton])

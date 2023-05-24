@@ -19,25 +19,16 @@ class MovieDetailsViewController: UIViewController {
     private let stackView = UIStackView()
     private let scrollView = UIScrollView()
 
-    private let movie: MovieModel
-    var presenter: MovieDetailsPresenter?
-    weak var coordinator: MovieCoordinator?
-
     private let screenPadding = UIEdgeInsets(top: 24, left: 24, bottom: 24, right: 24)
     private let elementsSpacing = 16.0
     private let posterHeight = 350.0
+
+    var movie: MovieModel!
+    var presenter: MovieDetailsPresenter!
+    weak var coordinator: MovieCoordinator!
     
     private var navigationItemImageName: String {
-        presenter!.isMovieInFavorites(movie.id) ? "heart.fill" : "heart"
-    }
-    
-    init(movie: MovieModel) {
-        self.movie = movie
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        presenter.isMovieInFavorites(movie.id) ? "heart.fill" : "heart"
     }
     
     override func viewDidLoad() {
@@ -45,13 +36,13 @@ class MovieDetailsViewController: UIViewController {
         setUpView()
         snapLayout()
         addNavigationItem()
-        presenter?.fetchPosterImage(path: movie.posterPath)
+        presenter.fetchPosterImage(path: movie.posterPath)
     }
     
     private func setUpView() {
         title = "Details"
         view.backgroundColor = .white
-        presenter?.viewController = self
+        presenter.viewController = self
 
         setUpLabels()
         setUpStackView()
@@ -111,7 +102,7 @@ class MovieDetailsViewController: UIViewController {
     }
     
     @objc private func favoriteButtonClicked() {
-        presenter?.toogleFavoriteMovie(movie.id)
+        presenter.toogleFavoriteMovie(movie.id)
         navigationItem.rightBarButtonItem?.image = UIImage(systemName: navigationItemImageName)
     }
 }
